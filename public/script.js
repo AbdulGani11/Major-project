@@ -1,16 +1,40 @@
-// Initialize Socket.IO connection
-const socket = io();
+// Initialize Socket.IO connection with WebSocket transport
+const socket = io('http://localhost:3000', { transports: ['websocket'] });
+
+// Connection event listener
+socket.on('connect', () => {
+  console.log('Connected to the server');
+});
+
+// Connection error event listener
+socket.on('connect_error', (error) => {
+  console.error('Connection error:', error);
+});
+
+// Connection timeout event listener
+socket.on('connect_timeout', () => {
+  console.log('Connection timed out');
+});
+
+// Cache DOM elements for performance
+const htmlCodeElement = document.getElementById('html-code');
+const cssCodeElement = document.getElementById('css-code');
+const jsCodeElement = document.getElementById('js-code');
+const outputIframe = document.getElementById('output');
+const rawCodeContainer = document.getElementById('raw-code-container');
+const rawCodeButton = document.getElementById('raw-code-button');
+const renderedOutputButton = document.getElementById('rendered-output-button');
 
 /**
  * Runs the code editor by capturing the values from the textareas, creating a blob
  * with the HTML, CSS, and JavaScript code, setting the iframe source to the blob URL,
  * emitting the updated code to the server, and logging the HTML content to the console.
  */
-function run() {
+async function run() {
   // Capture the values from the textareas
-  const htmlContent = document.getElementById('html-code').value;
-  const cssContent = document.getElementById('css-code').value;
-  const jsContent = document.getElementById('js-code').value;
+  const htmlContent = htmlCodeElement.value;
+  const cssContent = cssCodeElement.value;
+  const jsContent = jsCodeElement.value;
 
   // Create a blob with the HTML, CSS, and JavaScript code
   const codeBlob = new Blob([`
@@ -32,14 +56,19 @@ function run() {
   const blobUrl = URL.createObjectURL(codeBlob);
 
   // Set the source of the iframe to the blob URL
-  const outputIframe = document.getElementById('output');
   outputIframe.src = blobUrl;
 
-  // Emit the updated code to the server
+  // Emit the updated code to the server with an acknowledgment
   socket.emit('code update', {
     html: htmlContent,
     css: cssContent,
     js: jsContent
+  }, (response) => {
+    if (response && response.status === 'success') {
+        console.log('Code update successful');
+    } else {
+        console.error('Code update failed');
+    }
   });
 
   // Log the HTML content to the console
@@ -49,9 +78,9 @@ function run() {
 // Listen for 'code update' events from the server
 socket.on('code update', (data) => {
   // Update the editor with the received code
-  document.getElementById('html-code').value = data.html;
-  document.getElementById('css-code').value = data.css;
-  document.getElementById('js-code').value = data.js;
+  htmlCodeElement.value = data.html;
+  cssCodeElement.value = data.css;
+  jsCodeElement.value = data.js;
 
   // Call run() to reflect the changes in the output iframe
   run();
@@ -61,44 +90,31 @@ socket.on('code update', (data) => {
  * Toggles between showing the raw code and the rendered output.
  */
 function toggleRawAndRendered() {
-  const outputIframe = document.getElementById('output');
-  const rawCodeContainer = document.getElementById('raw-code-container');
-  const rawCodeButton = document.getElementById('raw-code-button');
-  const renderedOutputButton = document.getElementById('rendered-output-button');
-
-  if (outputIframe.style.display === 'none') {
-    // Show the rendered output
-    outputIframe.style.display = 'block';
-    rawCodeContainer.style.display = 'none';
-    rawCodeButton.classList.remove('active');
-    renderedOutputButton.classList.add('active');
-  } else {
-    // Show the raw code
-    outputIframe.style.display = 'none';
-    rawCodeContainer.style.display = 'block';
-    rawCodeButton.classList.add('active');
-    renderedOutputButton.classList.remove('active');
-  }
+  const isRawCodeVisible = outputIframe.style.display === 'none';
+  outputIframe.style.display = isRawCodeVisible ? 'block' : 'none';
+  rawCodeContainer.style.display = isRawCodeVisible ? 'none' : 'block';
+  rawCodeButton.classList.toggle('active', isRawCodeVisible);
+  renderedOutputButton.classList.toggle('active', !isRawCodeVisible);
 }
 
 /**
  * Resets the output to its default state.
  */
 function resetOutput() {
-  const outputIframe = document.getElementById('output');
   outputIframe.src = '';
   // Reset the raw code containers if necessary
   // ...
 }
 
 // Attach event listeners to trigger the run function on input change
-document.querySelectorAll('#html-code, #css-code, #js-code').forEach(textarea => {
+[htmlCodeElement, cssCodeElement, jsCodeElement].forEach(textarea => {
   textarea.addEventListener('input', run);
 });
 
 // Attach event listener to toggle between raw code and rendered output
-document.getElementById('raw-code-button').addEventListener('click', toggleRawAndRendered);
-document.getElementById('rendered-output-button').addEventListener('click', toggleRawAndRendered);
+[rawCodeButton, renderedOutputButton].forEach(button => {
+  button.addEventListener('click', toggleRawAndRendered);
+});
 
 // Attach event listener to reset the output
 document.getElementById('reset-button').addEventListener('click', resetOutput);
