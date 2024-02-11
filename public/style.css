@@ -144,3 +144,22 @@ iframe:hover {
   transition: background-color 0.3s ease, transform 0.3s ease,
     box-shadow 0.3s ease;
 }
+
+/* CSS to hide elements with the 'visible' class */
+.visible {
+  display: none;
+}
+
+/* CSS to show elements with the 'visible' class */
+.visible.show {
+  display: block;
+}
+
+.cursor-marker {
+  position: absolute;
+  height:  1em; /* Adjust the height of the marker */
+  width:  2px; /* Adjust the width of the marker */
+  background-color: #ff0000; /* Change the color to distinguish between users */
+  pointer-events: none; /* Prevent interaction with the marker */
+  z-index:  1000; /* Ensure the marker is above the text */
+}

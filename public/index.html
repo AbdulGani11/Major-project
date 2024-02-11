@@ -4,82 +4,45 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Code Editor</title>
-    <!-- Stylesheet for custom styles -->
     <link rel="stylesheet" href="style.css" />
-    <!-- Icon library for visual enhancements -->
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
 </head>
 <body>
-    <!-- Main container for the application -->
     <main class="container">
-        <!-- Header section with title -->
         <header>
             <h1>Code Editor 🧑‍💻</h1>
         </header>
-        <!-- Section for the editor interface -->
         <section class="editor">
-            <!-- Aside for input fields (HTML, CSS, JavaScript) -->
             <aside class="left">
-                <!-- Fieldset for HTML input -->
                 <fieldset>
-                    <legend>
-                        <i class="bx bxl-html5" aria-hidden="true" alt="HTML icon"></i>
-                        HTML
-                    </legend>
-                    <!-- Textarea for HTML code input -->
-                    <textarea
-                        oninput="run()"
-                        spellcheck="false"
-                        id="html-code"
-                    ></textarea>
+                    <legend><i class="bx bxl-html5" aria-hidden="true"></i> HTML</legend>
+                    <textarea spellcheck="false" id="html-code"></textarea>
                 </fieldset>
-                <!-- Fieldset for CSS input -->
                 <fieldset>
-                    <legend>
-                        <i class="bx bxl-css3" aria-hidden="true" alt="CSS icon"></i> CSS
-                    </legend>
-                    <!-- Textarea for CSS code input -->
-                    <textarea
-                        oninput="run()"
-                        spellcheck="false"
-                        id="css-code"
-                    ></textarea>
+                    <legend><i class="bx bxl-css3" aria-hidden="true"></i> CSS</legend>
+                    <textarea spellcheck="false" id="css-code"></textarea>
                 </fieldset>
-                <!-- Fieldset for JavaScript input -->
                 <fieldset>
-                    <legend>
-                        <i class="bx bxl-javascript" aria-hidden="true" alt="JavaScript icon"></i>
-                        Javascript
-                    </legend>
-                    <!-- Textarea for JavaScript code input -->
-                    <textarea
-                        oninput="run()"
-                        spellcheck="false"
-                        id="js-code"
-                    ></textarea>
+                    <legend><i class="bx bxl-javascript" aria-hidden="true"></i> JavaScript</legend>
+                    <textarea spellcheck="false" id="js-code"></textarea>
                 </fieldset>
             </aside>
-            <!-- Article for output display -->
             <article class="right">
-                <label for="output">
-                    <i class="bx bx-play" aria-hidden="true" alt="Play icon"></i> Output
-                </label>
-                <!-- iframe for displaying the rendered output -->
+                <label for="output"><i class="bx bx-play" aria-hidden="true"></i> Output</label>
                 <iframe id="output" title="Output Frame"></iframe>
             </article>
         </section>
     </main>
-    <!-- Control panel for toggling between raw code and rendered output -->
     <div class="controls">
+        <button id="live-mode-toggle-button" class="control-button">Live Mode</button>
         <button id="raw-code-button" class="control-button active">Raw Code</button>
         <button id="rendered-output-button" class="control-button">Rendered Output</button>
         <button id="reset-button" class="control-button">Reset Output</button>
     </div>
-    <!-- Container for displaying raw code -->
-    <div id="raw-code-container" class="raw-code-panel">
+    
+    <div id="raw-code-container" class="raw-code-panel visible">
         <!-- Raw code will be displayed here -->
     </div>
-    <!-- External script file for client-side logic -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 </body>

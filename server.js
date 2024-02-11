@@ -1,57 +1,66 @@
-// Import required modules
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
 const path = require('path');
 
-// Initialize Express app
 const app = express();
-
-// Enable CORS to allow cross-origin requests
 app.use(cors());
-
-// Serve static files from the 'public' directory
 app.use(express.static('./public'));
 
-// Serve the Socket.IO client library
+const ot = require('ot');
+const TextOperation = ot.TextOperation;
+
 app.use('/socket.io', express.static(path.join(__dirname, 'node_modules/socket.io-client/dist')));
 
-// Create HTTP server using the Express app
 const server = http.createServer(app);
-
-// Initialize Socket.IO with the HTTP server
 const io = socketIo(server, {
   cors: {
-    origin: "*", // Allow all origins
-    methods: ["GET", "POST"], // Allowed methods
-    credentials: true // Allow credentials
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
-// Event handler for new connections
 io.on('connection', (socket) => {
-    console.log(`User connected: ${socket.id}`);
+  console.log(`User connected: ${socket.id}`);
+  const userId = socket.handshake.auth?.userId;
+  if (userId) {
+    console.log(`Authenticated user: ${userId}`);
+  } else {
+    console.log('Unauthenticated user');
+    socket.disconnect();
+    return;
+  }
 
-    // Event handler for 'code update' messages
-    socket.on('code update', (data, ack) => {
-        console.log(`Received code update from ${socket.id}:`, data);
-        socket.broadcast.emit('code update', data);
-        
-        // Only call the acknowledgment if it is a function
-        if (typeof ack === 'function') {
-            ack({ status: 'success' });
-        }
-    });
+  socket.on('code update', (data, ack) => {
+    console.log(`Emitting code update to all clients`);
+    socket.broadcast.emit('code update', data);
+    setTimeout(() => {
+      if (ack) {
+        console.log(`Sending acknowledgment for code update`);
+        ack({ status: 'success' });
+      }
+    },  100);
+  });
 
-    // Event handler for disconnections
-    socket.on('disconnect', () => {
-        console.log(`User disconnected: ${socket.id}`);
-    });
+  socket.on('cursor move', (data, ack) => {
+    console.log(`Received cursor move from ${userId}:`, data);
+    socket.broadcast.emit('cursor move', { ...data, userId: userId });
+    setTimeout(() => {
+      if (ack) {
+        console.log(`Sending acknowledgment for cursor move`);
+        ack({ status: 'success' });
+      }
+    },  100);
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${userId}`);
+  });
 });
 
-// Start the server and listen on port   3000
-const PORT = process.env.PORT ||   3000;
+const PORT = process.env.PORT ||  3000;
 server.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });
