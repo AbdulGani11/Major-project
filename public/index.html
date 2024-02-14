@@ -1,47 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Code Editor</title>
-    <link rel="stylesheet" href="style.css" />
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Code Editor</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <header>
+        <h1>Collaborative Code Editor</h1>
+    </header>
+    <form id="room-creation-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" required>
+        <button type="submit">Create Room</button>
+    </form>
+    <div id="room-info">
+        <p>Your Room ID: <span id="room-id"></span></p>
+    </div>
     <main class="container">
-        <header>
-            <h1>Code Editor 🧑‍💻</h1>
-        </header>
         <section class="editor">
             <aside class="left">
                 <fieldset>
-                    <legend><i class="bx bxl-html5" aria-hidden="true"></i> HTML</legend>
-                    <textarea spellcheck="false" id="html-code"></textarea>
+                    <legend>HTML</legend>
+                    <textarea id="html-code"></textarea>
                 </fieldset>
                 <fieldset>
-                    <legend><i class="bx bxl-css3" aria-hidden="true"></i> CSS</legend>
-                    <textarea spellcheck="false" id="css-code"></textarea>
+                    <legend>CSS</legend>
+                    <textarea id="css-code"></textarea>
                 </fieldset>
                 <fieldset>
-                    <legend><i class="bx bxl-javascript" aria-hidden="true"></i> JavaScript</legend>
-                    <textarea spellcheck="false" id="js-code"></textarea>
+                    <legend>JavaScript</legend>
+                    <textarea id="js-code"></textarea>
                 </fieldset>
             </aside>
             <article class="right">
-                <label for="output"><i class="bx bx-play" aria-hidden="true"></i> Output</label>
+                <label for="output">Output</label>
                 <iframe id="output" title="Output Frame"></iframe>
             </article>
         </section>
     </main>
     <div class="controls">
-        <button id="live-mode-toggle-button" class="control-button">Live Mode</button>
-        <button id="raw-code-button" class="control-button active">Raw Code</button>
-        <button id="rendered-output-button" class="control-button">Rendered Output</button>
-        <button id="reset-button" class="control-button">Reset Output</button>
-    </div>
-    
-    <div id="raw-code-container" class="raw-code-panel visible">
-        <!-- Raw code will be displayed here -->
+        <button id="live-mode-toggle-button">Live Mode</button>
+        <button id="reset-button">Reset Output</button>
+        <!-- Join Room controls -->
+        <label for="room-id-input">Room ID:</label>
+        <input type="text" id="room-id-input" placeholder="Enter room ID">
+        <button id="join-room-button">Join Room</button>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>

@@ -6,21 +6,38 @@ const htmlCodeElement = document.getElementById('html-code');
 const cssCodeElement = document.getElementById('css-code');
 const jsCodeElement = document.getElementById('js-code');
 const outputIframe = document.getElementById('output');
-const rawCodeContainer = document.getElementById('raw-code-container');
-const rawCodeButton = document.getElementById('raw-code-button');
-const renderedOutputButton = document.getElementById('rendered-output-button');
-const resetButton = document.getElementById('reset-button');
+const usernameInput = document.getElementById('username'); // New element for username input
+const roomIdDisplay = document.getElementById('room-id'); // Element to display the room ID
+const roomIdInput = document.getElementById('room-id-input'); // Input field for entering room ID
 
 // State variables
 let liveMode = false;
-let userId = null; // This will hold the unique user ID
+let currentRoomId = null; // This will hold the current room ID
 
-// Generate a unique ID for the user (for simplicity, we'll use a random number)
-userId = Math.random().toString(36).substr(2,   9);
+// Function to create a room and join it
+function createRoom(event) {
+  event.preventDefault(); // Prevent form submission
+  const username = usernameInput.value;
+  const roomId = Math.random().toString(36).substr(2,   9);
+  joinRoom(roomId, username);
+  roomIdDisplay.textContent = roomId; // Display the room ID
+}
 
-// Constants for cursor position calculation (replace with actual values)
-const CHARACTER_WIDTH =  10; // Replace with actual character width
-const FONT_SIZE =  16; // Replace with actual font size
+// Function to join a room
+function joinRoom(roomId, username) {
+  socket.emit('join room', { roomId, username });
+  currentRoomId = roomId;
+  localStorage.setItem('lastJoinedRoomId', roomId);
+}
+
+// Function to leave a room
+function leaveRoom() {
+  if (currentRoomId) {
+    socket.emit('leave room', currentRoomId);
+    currentRoomId = null;
+    localStorage.removeItem('lastJoinedRoomId');
+  }
+}
 
 // Function to toggle live mode
 function toggleLiveMode() {
@@ -28,144 +45,75 @@ function toggleLiveMode() {
   document.getElementById('live-mode-toggle-button').innerText = liveMode ? 'Exit Live Mode' : 'Enter Live Mode';
 }
 
-// Function to toggle between raw code and rendered output
-function toggleRawAndRendered() {
-  const isRawCodeVisible = outputIframe.style.display === 'none';
-  outputIframe.style.display = isRawCodeVisible ? 'block' : 'none';
-  rawCodeContainer.style.display = isRawCodeVisible ? 'none' : 'block';
-  rawCodeButton.classList.toggle('active', isRawCodeVisible);
-  renderedOutputButton.classList.toggle('active', !isRawCodeVisible);
-}
+// Function to run the code and display the output
+function run() {
+  const html = htmlCodeElement.value;
+  const css = cssCodeElement.value;
+  const js = jsCodeElement.value;
 
-// Function to reset the output window
-function resetOutput() {
-  outputIframe.src = '';
-  // Reset the raw code containers if necessary
-  // ...
-}
+  // Convert the code into a format suitable for the iframe
+  const code = `<style>${css}</style><div id="app">${html}</div><script>${js}</script>`;
 
-// Function to update the cursor position for a user
-function updateCursorPosition(userId, cursorPosition) {
-  // Find or create a span element for the user's cursor
-  let cursorSpan = document.getElementById(`cursor-${userId}`);
-  if (!cursorSpan) {
-    cursorSpan = document.createElement('span');
-    cursorSpan.id = `cursor-${userId}`;
-    cursorSpan.className = 'cursor-marker';
-    cursorSpan.style.backgroundColor = getRandomColor(); // Function to generate a random color
-    // Append the cursor span to the editor
-    htmlCodeElement.appendChild(cursorSpan);
-  }
-
-  // Position the cursor span at the cursor position
-  // Note: This is a simplified example and assumes a monospace font where each character is the same width.
-  // In reality, you would need to calculate the exact pixel position based on the font and character width.
-  cursorSpan.style.left = `${(cursorPosition * CHARACTER_WIDTH)}px`;
-  cursorSpan.style.top = `${(FONT_SIZE /  2)}px`; // Adjust the top position based on the font size
-}
-
-// Function to generate a random color
-function getRandomColor() {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i =   0; i <   6; i++) {
-    color += letters[Math.floor(Math.random() *   16)];
-  }
-  return color;
-}
-
-// Initial run function
-async function run() {
-  // Capture the values from the textareas
-  const htmlContent = htmlCodeElement.value;
-  const cssContent = cssCodeElement.value;
-  const jsContent = jsCodeElement.value;
-
-  // Create a blob with the HTML, CSS, and JavaScript code
-  const codeBlob = new Blob([
-      `<!DOCTYPE html>
-      <html>
-        <head>
-          <style>${cssContent}</style>
-        </head>
-        <body>
-          ${htmlContent}
-          <script>
-            ${jsContent}
-          </script>
-        </body>
-      </html>`
-    ], { type: 'text/html' });
-
-  // Create a URL for the blob
-  const blobUrl = URL.createObjectURL(codeBlob);
-
-  // Set the source of the iframe to the blob URL
-  outputIframe.src = blobUrl;
-
-  // Emit the updated code to the server with an acknowledgment
-  socket.emit('code update', {
-    html: htmlContent,
-    css: cssContent,
-    js: jsContent,
-    userId: userId // Include the user ID in the event data
-  }, (response) => {
-    if (response && response.status === 'success') {
-        console.log('Code update successful');
-    } else {
-        console.error('Code update failed');
-    }
-  });
-
-  // Log the HTML content to the console
-  console.log(htmlContent);
+  // Update the iframe's content
+  outputIframe.srcdoc = code;
 }
 
 // Listen for 'code update' events from the server
 socket.on('code update', (data) => {
-  // Update the editor with the received code
-  htmlCodeElement.value = data.html;
-  cssCodeElement.value = data.css;
-  jsCodeElement.value = data.js;
-
-  // Call run() to reflect the changes in the output iframe
-  run();
-});
-
-// Listen for 'cursor move' events from the server
-socket.on('cursor move', (data) => {
-  // Update the cursor position for the user with the received data.userId
-  updateCursorPosition(data.userId, data.cursorPosition);
+  if (liveMode && data.roomId === currentRoomId) {
+    switch (data.language) {
+      case 'html':
+        htmlCodeElement.value = data.code;
+        break;
+      case 'css':
+        cssCodeElement.value = data.code;
+        break;
+      case 'js':
+        jsCodeElement.value = data.code;
+        break;
+    }
+    run();
+  }
 });
 
 // Emit 'code update' events to the server whenever the code is changed
 [htmlCodeElement, cssCodeElement, jsCodeElement].forEach(textarea => {
   textarea.addEventListener('input', (event) => {
     if (liveMode) {
-      run().catch(console.error);
+      const language = textarea.id.split('-')[0]; // Determine the language based on the textarea's ID
+      socket.emit('code update', {
+        roomId: currentRoomId,
+        username: usernameInput.value,
+        language: language,
+        code: textarea.value
+      });
     }
   });
 });
 
-// Emit 'cursor move' events to the server whenever the cursor moves
-htmlCodeElement.addEventListener('keydown', (event) => {
-  const cursorPosition = htmlCodeElement.selectionStart;
-  socket.emit('cursor move', {
-    userId: userId,
-    cursorPosition: cursorPosition
-  });
-});
+// Attach event listener to create a room and join it
+document.getElementById('room-creation-form').addEventListener('submit', createRoom);
 
-// Attach event listener to toggle between raw code and rendered output
-[rawCodeButton, renderedOutputButton].forEach(button => {
-  button.addEventListener('click', toggleRawAndRendered);
+// Attach event listener to join a room
+document.getElementById('join-room-button').addEventListener('click', () => {
+  const roomId = roomIdInput.value;
+  const username = usernameInput.value;
+  joinRoom(roomId, username);
 });
 
 // Attach event listener to toggle live mode
 document.getElementById('live-mode-toggle-button').addEventListener('click', toggleLiveMode);
 
 // Attach event listener to reset the output
-resetButton.addEventListener('click', resetOutput);
+document.getElementById('reset-button').addEventListener('click', () => {
+  outputIframe.srcdoc = '';
+});
 
 // Run the function initially to log the output
-run().catch(console.error);
+run();
+
+// Rejoin the last room if available
+const lastJoinedRoomId = localStorage.getItem('lastJoinedRoomId');
+if (lastJoinedRoomId) {
+  joinRoom(lastJoinedRoomId, usernameInput.value);
+}

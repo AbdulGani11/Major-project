@@ -15,6 +15,12 @@
   --color-bg: #252744;
   --color-textarea-bg: #1f1f1f;
   --color-textarea-bg-focus: #3a3c5e;
+  --color-primary: #4caf50;
+  --color-secondary: #f44336;
+  --color-tertiary: #ffeb3b;
+  --color-quaternary: #9c27b0;
+  --color-quinary: #3f51b5;
+  --color-gray: #888;
 }
 
 /* General body styles */
@@ -28,6 +34,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-size: 16px; /* Set a base font size for better readability */
 }
 
 /* Heading styles */
@@ -35,6 +42,48 @@ h1 {
   font-family: "Edu SA Beginner", cursive;
   font-weight: 600;
   padding: 1rem;
+  text-align: center;
+  font-size: 2.5rem; /* Increase heading size for better visibility */
+}
+
+/* Form styles */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 1rem;
+  background-color: var(
+    --color-quinary
+  ); /* Add a subtle background color to forms */
+  border-radius: 8px; /* Round corners for a modern look */
+}
+
+input[type="text"] {
+  padding: 5px 10px;
+  font-size: 16px;
+  border: 1px solid var(--color-gray);
+  border-radius: 4px;
+}
+
+button {
+  padding: 5px 10px;
+  font-size: 16px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition for hover effect */
+}
+
+button:hover {
+  background-color: var(--color-secondary);
+  transform: translateY(-2px); /* Slight lift on hover */
+}
+
+button:active {
+  transform: translateY(0); /* No movement on active state */
 }
 
 /* Container styles */
@@ -76,11 +125,11 @@ textarea {
   height: 300px;
   background-color: var(--color-textarea-bg);
   color: var(--color-white);
-  border: 0;
-  outline: 0;
+  border: 1px solid var(--color-gray);
+  outline: none;
   font-size: 18px;
   padding: 10px 20px;
-  resize: none;
+  resize: vertical;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -95,11 +144,12 @@ iframe {
   width: 100%;
   height: calc(100% - 40px);
   background: var(--color-white);
-  border: 0;
-  outline: 0;
+  border: 1px solid var(--color-gray);
+  outline: none;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px; /* Round corners for a modern look */
 }
 
 iframe:hover {
@@ -112,54 +162,153 @@ iframe:hover {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 20px; /* Space out control buttons */
 }
 
-/* Existing .control-button styles */
 .control-button {
   background-color: #f0f0f0;
   border: 1px solid #ccc;
   padding: 5px 10px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease,
-    box-shadow 0.3s ease;
-  /* Added margin for spacing */
+    box-shadow 0.3s ease; /* Smooth transition for hover effect */
   margin: 20px;
 }
 
-/* Hover effect for .control-button */
 .control-button:hover {
-  background-color: #d9d9d9; /* Lighter shade on hover */
-  transform: scale(1.4); /* Slightly enlarge the button */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Enhanced shadow for depth */
+  background-color: #d9d9d9;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Active state for .control-button */
 .control-button:active {
-  transform: scale(0.95); /* Slightly reduce the button size */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Smaller shadow for pressed effect */
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Transition effect for smooth changes */
-.control-button {
-  transition: background-color 0.3s ease, transform 0.3s ease,
-    box-shadow 0.3s ease;
+.control-button.active {
+  background-color: var(--color-primary);
+  color: var(--color-white);
 }
 
-/* CSS to hide elements with the 'visible' class */
-.visible {
+/* Media query for smaller screens */
+@media screen and (max-width: 768px) {
+  .editor {
+    flex-direction: column;
+  }
+
+  .left,
+  .right {
+    flex-basis: 100%;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  h1 {
+    font-size: 2rem; /* Reduce heading size for mobile devices */
+  }
+}
+
+/* CSS to hide elements with the 'hidden' class */
+.hidden {
   display: none;
 }
 
-/* CSS to show elements with the 'visible' class */
-.visible.show {
+/* CSS to show elements with the 'shown' class */
+.shown {
   display: block;
 }
 
+/* Styles for cursor markers */
 .cursor-marker {
   position: absolute;
-  height:  1em; /* Adjust the height of the marker */
-  width:  2px; /* Adjust the width of the marker */
+  height: 1em; /* Adjust the height of the marker */
+  width: 2px; /* Adjust the width of the marker */
   background-color: #ff0000; /* Change the color to distinguish between users */
   pointer-events: none; /* Prevent interaction with the marker */
-  z-index:  1000; /* Ensure the marker is above the text */
+  z-index: 1000; /* Ensure the marker is above the text */
+}
+
+/* Additional styles for the room creation form and room info */
+#room-creation-form {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  background-color: var(
+    --color-quinary
+  ); /* Add a subtle background color to forms */
+  padding: 20px; /* Add padding inside the form */
+}
+
+#room-creation-form label,
+#room-creation-form input,
+#room-creation-form button {
+  margin: 0 10px;
+  font-size: 1rem; /* Adjust font size for inputs and buttons */
+}
+
+#room-info {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 18px;
+  color: var(--color-white);
+  font-weight: bold; /* Make room ID bold for emphasis */
+}
+
+/* New feature: Tooltip for buttons */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: var(--color-black);
+  color: var(--color-white);
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position the tooltip above the button */
+  left: 50%;
+  margin-left: -60px; /* Center the tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Example usage of tooltip */
+button.with-tooltip {
+  position: relative;
+}
+
+button.with-tooltip:after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: var(--color-black);
+  color: var(--color-white);
+  font-size: 0.8rem;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+button.with-tooltip:hover:after {
+  visibility: visible;
+  opacity: 1;
 }
