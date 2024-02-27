@@ -1,5 +1,5 @@
 // Initialize Socket.IO connection with WebSocket transport
-const socket = io('http://localhost:3000', { transports: ['websocket'] });
+const socket = io('https://c4d7-2409-40e3-1019-c815-d5ff-dab8-c137-764d.ngrok-free.app/', { transports: ['websocket'] });
 
 // Cache DOM elements for performance
 const htmlCodeElement = document.getElementById('html-code');
@@ -18,7 +18,7 @@ let currentRoomId = null; // This will hold the current room ID
 function createRoom(event) {
   event.preventDefault(); // Prevent form submission
   const username = usernameInput.value;
-  const roomId = Math.random().toString(36).substr(2,   9);
+  const roomId = Math.random().toString(36).substr(2, 9);
   joinRoom(roomId, username);
   roomIdDisplay.textContent = roomId; // Display the room ID
 }
@@ -72,7 +72,7 @@ socket.on('code update', (data) => {
         jsCodeElement.value = data.code;
         break;
     }
-    run();
+    run(); // Ensure this function updates the output preview
   }
 });
 
@@ -87,9 +87,11 @@ socket.on('code update', (data) => {
         language: language,
         code: textarea.value
       });
+      run(); // Call run() to update the output preview in real-time
     }
   });
 });
+
 
 // Attach event listener to create a room and join it
 document.getElementById('room-creation-form').addEventListener('submit', createRoom);

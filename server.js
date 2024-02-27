@@ -44,12 +44,13 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Handle code updates
-  socket.on('code update', (data) => {
-    console.log(`Emitting code update to all clients in room: ${data.roomId}`);
-    // Exclude the sender's socket ID when broadcasting
-    socket.to(data.roomId).except(socket.id).emit('code update', { ...data, username: data.username });
-  });
+// Handle code updates
+socket.on('code update', (data) => {
+  console.log(`Emitting code update to all clients in room: ${data.roomId}`);
+  // Emit to all clients in the room, including the sender
+  socket.to(data.roomId).emit('code update', { ...data, username: data.username });
+});
+
 
   // Handle cursor movements
   socket.on('cursor move', (data) => {
