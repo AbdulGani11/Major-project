@@ -4,22 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collaborative Code Editor</title>
+    
+    <!-- Link to the external CSS file for styling -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Link to the new media queries CSS file -->
+    <link rel="stylesheet" href="media-queries.css">
 </head>
 <body>
+    <!-- Header section with the title of the application -->
     <header>
         <h1>Collaborative Code Editor</h1>
     </header>
+    <!-- Form for creating a new room -->
     <form id="room-creation-form">
         <label for="username">Username:</label>
         <input type="text" id="username" required>
         <button type="submit">Create Room</button>
     </form>
+    <!-- Display the room ID -->
     <div id="room-info">
         <p>Your Room ID: <span id="room-id"></span></p>
     </div>
+    <!-- Main container for the editor and output -->
     <main class="container">
         <section class="editor">
+            <!-- Left panel for code editing -->
             <aside class="left">
                 <fieldset>
                     <legend>HTML</legend>
@@ -34,12 +44,17 @@
                     <textarea id="js-code"></textarea>
                 </fieldset>
             </aside>
+            <!-- Right panel for output preview -->
             <article class="right">
                 <label for="output">Output</label>
                 <iframe id="output" title="Output Frame"></iframe>
+
+                 <!-- Button for zoom-in -->
+                <button id="zoom-in-button">Zoom In</button>
             </article>
         </section>
     </main>
+    <!-- Controls for live mode, reset output, and room joining -->
     <div class="controls">
         <button id="live-mode-toggle-button">Live Mode</button>
         <button id="reset-button">Reset Output</button>
@@ -48,6 +63,7 @@
         <input type="text" id="room-id-input" placeholder="Enter room ID">
         <button id="join-room-button">Join Room</button>
     </div>
+    <!-- Scripts for Socket.IO and the main application logic -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 </body>

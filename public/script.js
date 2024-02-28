@@ -1,11 +1,15 @@
 // Initialize Socket.IO connection with WebSocket transport
-const socket = io('https://c4d7-2409-40e3-1019-c815-d5ff-dab8-c137-764d.ngrok-free.app/', { transports: ['websocket'] });
+
+const socket = io('https://0c78-2409-40e3-1019-c815-d5ff-dab8-c137-764d.ngrok-free.app/', { transports: ['websocket'] });
+
+// const socket = io('http://localhost:3000', { transports: ['websocket'] });
 
 // Cache DOM elements for performance
 const htmlCodeElement = document.getElementById('html-code');
 const cssCodeElement = document.getElementById('css-code');
 const jsCodeElement = document.getElementById('js-code');
 const outputIframe = document.getElementById('output');
+const zoomInButton = document.getElementById('zoom-in-button');
 const usernameInput = document.getElementById('username'); // New element for username input
 const roomIdDisplay = document.getElementById('room-id'); // Element to display the room ID
 const roomIdInput = document.getElementById('room-id-input'); // Input field for entering room ID
@@ -18,7 +22,7 @@ let currentRoomId = null; // This will hold the current room ID
 function createRoom(event) {
   event.preventDefault(); // Prevent form submission
   const username = usernameInput.value;
-  const roomId = Math.random().toString(36).substr(2, 9);
+  const roomId = Math.random().toString(36).substr(2,  9);
   joinRoom(roomId, username);
   roomIdDisplay.textContent = roomId; // Display the room ID
 }
@@ -92,7 +96,6 @@ socket.on('code update', (data) => {
   });
 });
 
-
 // Attach event listener to create a room and join it
 document.getElementById('room-creation-form').addEventListener('submit', createRoom);
 
@@ -119,3 +122,16 @@ const lastJoinedRoomId = localStorage.getItem('lastJoinedRoomId');
 if (lastJoinedRoomId) {
   joinRoom(lastJoinedRoomId, usernameInput.value);
 }
+
+
+// Function to toggle fullscreen mode for the output iframe
+function toggleFullscreen() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    outputIframe.requestFullscreen();
+  }
+}
+
+// Add event listener to the zoom-in button
+zoomInButton.addEventListener('click', toggleFullscreen);

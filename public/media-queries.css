@@ -1,0 +1,92 @@
+/* Media query for smaller screens */
+@media screen and (max-width: 768px) {
+  .editor {
+    flex-direction: column;
+  }
+
+  .left,
+  .right {
+    flex-basis: 100%;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  h1 {
+    font-size: 2rem; /* Reduce heading size for mobile devices */
+  }
+
+  input[type="text"],
+  button,
+  .control-button {
+    font-size: 0.9rem; /* Adjust font size for inputs, buttons, and control buttons on smaller screens */
+    padding: 5px 10px; /* Adjust padding for better touch target size */
+  }
+
+  textarea {
+    font-size: 1.1rem; /* Adjust font size for textareas on smaller screens */
+  }
+}
+
+/* Additional media query for tablets */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .editor {
+    flex-direction: row;
+  }
+
+  .left,
+  .right {
+    flex-basis: 50%;
+  }
+
+  .controls {
+    flex-direction: row;
+  }
+
+  h1 {
+    font-size: 2.25rem; /* Adjust heading size for tablets */
+  }
+
+  input[type="text"],
+  button,
+  .control-button {
+    font-size: 0.95rem; /* Adjust font size for inputs, buttons, and control buttons on tablets */
+    padding: 5px 10px; /* Adjust padding for better touch target size */
+  }
+
+  textarea {
+    font-size: 1.15rem; /* Adjust font size for textareas on tablets */
+  }
+}
+
+/* Additional media query for large desktop screens */
+@media screen and (min-width: 1025px) {
+  .editor {
+    flex-direction: row;
+  }
+
+  .left,
+  .right {
+    flex-basis: 50%;
+  }
+
+  .controls {
+    flex-direction: row;
+  }
+
+  h1 {
+    font-size: 2.5rem; /* Adjust heading size for large desktops */
+  }
+
+  input[type="text"],
+  button,
+  .control-button {
+    font-size: 1rem; /* Adjust font size for inputs, buttons, and control buttons on large desktops */
+    padding: 5px 10px; /* Adjust padding for better touch target size */
+  }
+
+  textarea {
+    font-size: 1.25rem; /* Adjust font size for textareas on large desktops */
+  }
+}

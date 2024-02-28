@@ -34,7 +34,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-size: 16px; /* Set a base font size for better readability */
+  font-size: 1rem; /* Set a base font size for better readability */
 }
 
 /* Heading styles */
@@ -61,14 +61,14 @@ form {
 
 input[type="text"] {
   padding: 5px 10px;
-  font-size: 16px;
+  font-size: 1rem;
   border: 1px solid var(--color-gray);
   border-radius: 4px;
 }
 
 button {
   padding: 5px 10px;
-  font-size: 16px;
+  font-size: 1rem;
   background-color: var(--color-primary);
   color: var(--color-white);
   border: none;
@@ -111,7 +111,7 @@ button:active {
 label {
   display: flex;
   align-items: center;
-  font-size: 18px;
+  font-size: 1.25rem;
   margin-bottom: 10px;
 }
 
@@ -127,7 +127,7 @@ textarea {
   color: var(--color-white);
   border: 1px solid var(--color-gray);
   outline: none;
-  font-size: 18px;
+  font-size: 1.25rem;
   padding: 10px 20px;
   resize: vertical;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -192,26 +192,6 @@ iframe:hover {
   color: var(--color-white);
 }
 
-/* Media query for smaller screens */
-@media screen and (max-width: 768px) {
-  .editor {
-    flex-direction: column;
-  }
-
-  .left,
-  .right {
-    flex-basis: 100%;
-  }
-
-  .controls {
-    flex-direction: column;
-  }
-
-  h1 {
-    font-size: 2rem; /* Reduce heading size for mobile devices */
-  }
-}
-
 /* CSS to hide elements with the 'hidden' class */
 .hidden {
   display: none;
@@ -253,7 +233,7 @@ iframe:hover {
 #room-info {
   text-align: center;
   margin-top: 20px;
-  font-size: 18px;
+  font-size: 1.25rem;
   color: var(--color-white);
   font-weight: bold; /* Make room ID bold for emphasis */
 }
